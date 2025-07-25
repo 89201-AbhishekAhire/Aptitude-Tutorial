@@ -7,18 +7,25 @@ function Navbar() {
             justifyContent: 'space-between',
             alignItems: 'center',
             padding: '10px 20px',
-            backgroundColor: '#f8f8f8'
+            backgroundColor: '#333',
+            color:'white',
+            position:'sticky',
+            top:0,
+            zIndex:1000
         }}>
 
             <div style={{ display: 'flex', gap: '20px' }}>
-                <Link to="/">Home</Link>
-                <Link to="/topic">Topic</Link>
-                <Link to="/quiz">Quiz</Link>
+                {/* <Link to="/" style={{ color: 'white', textDecoration: 'none' }}>Home</Link> */}
+                <Link to="/topic" style={{ color: 'white', textDecoration: 'none' }}>Topic</Link>
+                <Link to="/quiz" style={{ color: 'white', textDecoration: 'none' }}>Quiz</Link>
+
             </div>
 
             <div style={{ display: 'flex', gap: '20px' }}>
-                <Link to="/login">Login</Link>
-                <Link to="/register">Register</Link>
+                <Link to="/login" style={{ color: 'white', textDecoration: 'none' }}>Login</Link>
+
+                <Link to="/register" style={{ color: 'white', textDecoration: 'none' }}>Register</Link>
+
             </div>
         </nav>
     );
