@@ -1,129 +1,63 @@
-import React, { useState } from 'react';
-import { toast } from 'react-toastify';
-import { loginUser } from '../services/user';
-import { setUserSession } from '../services/auth';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/auth.context';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-function Login() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+function Login({ users, onLogin }) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
-  const { setUser } = useAuth();
 
-  const onLogin = async (e) => {
-    e.preventDefault(); // Prevent default form submission
-    
-    // Validate inputs
-    if (!email.trim()) {
-      toast.warn('Please enter email');
-      return;
-    }
-    if (!password) {
-      toast.warn('Please enter password');
-      return;
-    }
-
-    setIsLoading(true);
-    
-    try {
-      // Call the login service
-      const result = await loginUser(email, password);
-      
-      // Store user data in session storage
-      setUserSession(result.token, {
-        firstName: result.firstName,
-        lastName: result.lastName,
-        email: result.email
-      });
-      
-      // Set user in context
-      setUser({
-        firstName: result.firstName,
-        lastName: result.lastName,
-        email: result.email
-      });
-      
-      // Show success message and redirect
-      toast.success(`Welcome back, ${result.firstName}!`);
-      navigate('/home'); // Redirect to home page
-      
-    } catch (error) {
-      console.error('Login error:', error);
-      
-      // Handle specific error cases
-      if (error.message === 'User not found') {
-        toast.error('No account found with this email');
-      } else if (error.message === 'Invalid password') {
-        toast.error('Incorrect password');
-      } else {
-        toast.error(error.userFriendlyMessage || 'Login failed. Please try again.');
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // Handle form submission on Enter key
-  const handleKeyPress = (e) => {
-    if (e.key === 'Enter') {
-      onLogin(e);
+  const handleLogin = (e) => {
+    e.preventDefault();
+    const user = users.find(
+      (u) => u.email === email && u.password === password
+    );
+    if (user) {
+      onLogin(user);
+      setError("");
+      navigate("/dashboard");
+    } else {
+      setError("Invalid credentials");
     }
   };
 
   return (
-    <div className='container'>
-      <h2 className='page-header'>Login</h2>
-
-      <form onSubmit={onLogin}>
-        <div className='mb-3'>
-          <label htmlFor='email'>Email</label>
-          <input
-            id='email'
-            onChange={(e) => setEmail(e.target.value)}
-            value={email}
-            type='email'
-            className='form-control'
-            placeholder='username@test.com'
-            onKeyPress={handleKeyPress}
-            required
-          />
+    <div className="container mt-5">
+      <div className="row justify-content-center">
+        <div className="col-md-4">
+          <form onSubmit={handleLogin} className="card p-4 shadow">
+            <h2 className="mb-4 text-center">Login</h2>
+            <div className="mb-3">
+              <input
+                type="email"
+                className="form-control"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+            <div className="mb-3">
+              <input
+                type="password"
+                className="form-control"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </div>
+            <button type="submit" className="btn btn-primary w-100">
+              Login
+            </button>
+            {error && (
+              <div className="alert alert-danger mt-3" role="alert">
+                {error}
+              </div>
+            )}
+          </form>
         </div>
-
-        <div className='mb-3'>
-          <label htmlFor='password'>Password</label>
-          <input
-            id='password'
-            onChange={(e) => setPassword(e.target.value)}
-            value={password}
-            type='password'
-            className='form-control'
-            placeholder='#######'
-            onKeyPress={handleKeyPress}
-            required
-          />
-        </div>
-
-        <div className='mb-3'>
-          <div className='mb-3'>
-            Don't have an account yet? <Link to='/register'>Register here</Link>
-          </div>
-          <button
-            type='submit'
-            className='btn btn-success'
-            disabled={isLoading}
-          >
-
-            {isLoading ? (
-              <>
-                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                Logging in...
-              </>
-            ) : 'Login'}
-          </button>
-        </div>
-      </form>
+      </div>
     </div>
   );
 }

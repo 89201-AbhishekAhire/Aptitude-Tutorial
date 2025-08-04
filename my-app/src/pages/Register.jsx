@@ -1,158 +1,107 @@
-import React, { useState } from 'react';
-import { toast } from 'react-toastify';
-import { registerUser } from '../services/user';
-import { setUserSession } from '../services/auth';
-import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '../contexts/auth.context';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-function Register() {
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    password: '',
-    confirmPassword: ''
+function Register({ users, onRegister }) {
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    password: "",
+    role: "student",
   });
-  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const navigate = useNavigate();
-  const { setUser } = useAuth();
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const onRegister = async (e) => {
+  const handleRegister = (e) => {
     e.preventDefault();
-    
-    // Basic validation
-    if (formData.password !== formData.confirmPassword) {
-      toast.warn('Passwords do not match');
+    if (users.find((u) => u.email === form.email)) {
+      setError("Email already exists");
+      setSuccess("");
       return;
     }
-
-    setIsLoading(true);
-    
-    try {
-      const result = await registerUser(
-        formData.firstName,
-        formData.lastName,
-        formData.email,
-        formData.phone,
-        formData.password
-      );
-      
-      // Store user data in session storage for automatic login
-      setUserSession(result.token, {
-        firstName: result.firstName,
-        lastName: result.lastName,
-        email: result.email
-      });
-      
-      // Set user in context
-      setUser({
-        firstName: result.firstName,
-        lastName: result.lastName,
-        email: result.email
-      });
-      
-      toast.success(`Welcome ${result.firstName}! Registration successful!`);
-      navigate('/home'); // Redirect directly to home page
-      
-    } catch (error) {
-      console.error('Registration error:', error);
-      toast.error(error.message || 'Registration failed. Please try again.');
-    } finally {
-      setIsLoading(false);
-    }
+    const newUser = {
+      ...form,
+      user_id: users.length + 1,
+      created_at: new Date().toISOString(),
+    };
+    onRegister(newUser);
+    setSuccess("Registration successful! Redirecting to login...");
+    setError("");
+    setTimeout(() => {
+      navigate("/login");
+    }, 1500); // 1.5 seconds delay for user to see the message
   };
 
   return (
-    <div className='container'>
-      <h2 className='page-header'>Register</h2>
-      <form onSubmit={onRegister} className='form'>
-        {/* Update all input fields to use name and handleChange */}
-        <div className='mb-3'>
-          <label>First Name</label>
-          <input
-            name="firstName"
-            onChange={handleChange}
-            value={formData.firstName}
-            type='text'
-            className='form-control'
-            required
-          />
+    <div className="container mt-5">
+      <div className="row justify-content-center">
+        <div className="col-md-5">
+          <form onSubmit={handleRegister} className="card p-4 shadow">
+            <h2 className="mb-4 text-center">Register</h2>
+            <div className="mb-3">
+              <input
+                type="text"
+                name="name"
+                className="form-control"
+                placeholder="Name"
+                value={form.name}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="mb-3">
+              <input
+                type="email"
+                name="email"
+                className="form-control"
+                placeholder="Email"
+                value={form.email}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="mb-3">
+              <input
+                type="password"
+                name="password"
+                className="form-control"
+                placeholder="Password"
+                value={form.password}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="mb-3">
+              <select
+                name="role"
+                className="form-select"
+                value={form.role}
+                onChange={handleChange}
+              >
+                <option value="student">Student</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
+            <button type="submit" className="btn btn-success w-100">
+              Register
+            </button>
+            {error && (
+              <div className="alert alert-danger mt-3" role="alert">
+                {error}
+              </div>
+            )}
+            {success && (
+              <div className="alert alert-success mt-3" role="alert">
+                {success}
+              </div>
+            )}
+          </form>
         </div>
-        <div className='mb-3'>
-          <label>Last Name</label>
-          <input
-            name="lastName"
-            onChange={handleChange}
-            value={formData.lastName}
-            type='text'
-            className='form-control'
-            required
-          />
-        </div>
-        <div className='mb-3'>
-          <label>Email</label>
-          <input
-            name="email"
-            onChange={handleChange}
-            type='email'
-            className='form-control'
-            value={formData.email}
-            required
-          />
-        </div>
-        <div className='mb-3'>
-          <label>Phone Number</label>
-          <input
-            name="phone"
-            onChange={handleChange}
-            type='tel'
-            className='form-control'
-            value={formData.phone}
-            required
-          />
-        </div>
-        <div className='mb-3'>
-          <label htmlFor=''>Password</label>
-          <input
-            name="password"
-            onChange={handleChange}
-            type='password'
-            className='form-control'
-            value={formData.password}
-            required
-          />
-        </div>
-        <div className='mb-3'>
-          <label htmlFor=''>Confirm Password</label>
-          <input
-            name="confirmPassword"
-            onChange={handleChange}
-            type='password'
-            className='form-control'
-            value={formData.confirmPassword}
-            required
-          />
-        </div>
-
-        <div className='mb-3'>
-          <div className='mb-3'>
-            Already have an account? <Link to='/login'>Login here</Link>
-          </div>
-        </div>
-        <button
-          type="submit"
-          className='btn btn-success'
-          disabled={isLoading}
-        >
-          {isLoading ? 'Registering...' : 'Register'}
-        </button>
-      </form>
+      </div>
     </div>
   );
 }
