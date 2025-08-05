@@ -1,0 +1,189 @@
+[
+  {
+    "id": "percentage",
+    "name": "Percentage",
+    "description": "Learn about percentages, their calculation, and applications in various scenarios.",
+    "videos": [
+      "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "https://www.youtube.com/embed/VIDEO_ID1_2"
+    ],
+    "notes": [
+      "Percentage is a way of expressing a number as a fraction of 100.",
+      "Formula: (Value/Total) x 100",
+      "To find percentage increase: ((New Value - Old Value) / Old Value) x 100",
+      "To find percentage decrease: ((Old Value - New Value) / Old Value) x 100",
+      "Simple percentage problems can be solved using cross-multiplication."
+    ],
+    "quizPath": "/quiz/percentage"
+  },
+  {
+    "id": "profit-loss",
+    "name": "Profit & Loss",
+    "description": "Understand profit, loss, and related calculations in business scenarios.",
+    "videos": [
+      "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "https://www.youtube.com/embed/VIDEO_ID2_2"
+    ],
+    "notes": [
+      "Profit = Selling Price - Cost Price",
+      "Loss = Cost Price - Selling Price",
+      "Profit Percentage = (Profit / Cost Price) x 100",
+      "Loss Percentage = (Loss / Cost Price) x 100",
+      "Marked Price is the price marked on the item",
+      "Discount = Marked Price - Selling Price",
+      "Discount Percentage = (Discount / Marked Price) x 100"
+    ],
+    "quizPath": "/quiz/profit-loss"
+  },
+  {
+    "id": "time-work",
+    "name": "Time & Work",
+    "description": "Master time and work problems involving efficiency and productivity.",
+    "videos": [
+      "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "https://www.youtube.com/embed/VIDEO_ID3_2"
+    ],
+    "notes": [
+      "Work = Time x Efficiency",
+      "If A can do work in 'a' days, then A's 1 day work = 1/a",
+      "If A and B work together, their combined work = (1/a + 1/b)",
+      "Time taken by A and B together = 1/(1/a + 1/b)",
+      "If A is 'n' times more efficient than B, then A takes 1/n times less time",
+      "Work done = (Number of workers) x (Time) x (Efficiency)"
+    ],
+    "quizPath": "/quiz/time-work"
+  },
+  {
+    "id": "speed-distance",
+    "name": "Speed & Distance",
+    "description": "Solve problems involving speed, distance, and time relationships.",
+    "videos": [
+      "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "https://www.youtube.com/embed/VIDEO_ID4_2"
+    ],
+    "notes": [
+      "Speed = Distance / Time",
+      "Distance = Speed x Time",
+      "Time = Distance / Speed",
+      "Average Speed = Total Distance / Total Time",
+      "When two objects move in opposite directions, relative speed = sum of speeds",
+      "When two objects move in same direction, relative speed = difference of speeds",
+      "For upstream/downstream problems: Speed in still water = (Downstream + Upstream) / 2"
+    ],
+    "quizPath": "/quiz/speed-distance"
+  },
+  {
+    "id": "ratio",
+    "name": "Ratio",
+    "description": "Learn about ratios, proportions, and their applications in various problems.",
+    "videos": [
+      "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "https://www.youtube.com/embed/VIDEO_ID5_2"
+    ],
+    "notes": [
+      "Ratio is a comparison of two quantities in the same unit",
+      "Ratio a:b means a parts to b parts",
+      "If a:b = c:d, then ad = bc (cross-multiplication)",
+      "If a:b = c:d, then (a+b):(a-b) = (c+d):(c-d)",
+      "Compound ratio: (a:b) x (c:d) = (ac:bd)",
+      "If A:B:C = a:b:c, then A = ka, B = kb, C = kc where k is a constant",
+      "For mixture problems: (Quantity1 x Price1) + (Quantity2 x Price2) = (Total Quantity x Average Price)"
+    ],
+    "quizPath": "/quiz/ratio"
+  },
+  {
+    "id": "number-series",
+    "name": "Number Series",
+    "description": "Identify patterns and find missing numbers in mathematical sequences.",
+    "videos": [
+      "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "https://www.youtube.com/embed/VIDEO_ID6_2"
+    ],
+    "notes": [
+      "Arithmetic Progression: Each term differs by a constant value",
+      "Geometric Progression: Each term is multiplied by a constant ratio",
+      "Fibonacci Series: Each term is sum of previous two terms",
+      "Square Series: 1, 4, 9, 16, 25... (n²)",
+      "Cube Series: 1, 8, 27, 64, 125... (n³)",
+      "Prime Number Series: 2, 3, 5, 7, 11, 13...",
+      "Look for patterns: addition, subtraction, multiplication, division, or combination"
+    ],
+    "quizPath": "/quiz/number-series"
+  },
+  {
+    "id": "ages",
+    "name": "Ages",
+    "description": "Solve age-related problems using mathematical relationships and ratios.",
+    "videos": [
+      "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "https://www.youtube.com/embed/VIDEO_ID7_2"
+    ],
+    "notes": [
+      "Age difference between two people remains constant over time",
+      "If A's age is x years and B's age is y years, then age difference = |x-y|",
+      "After n years: A's age = x+n, B's age = y+n",
+      "n years ago: A's age = x-n, B's age = y-n",
+      "If A:B = a:b, then A's age = ka, B's age = kb where k is a constant",
+      "For age ratio problems, use cross-multiplication: a/b = c/d implies ad = bc",
+      "Present age + years passed = future age"
+    ],
+    "quizPath": "/quiz/ages"
+  },
+  {
+    "id": "simple-interest",
+    "name": "Simple Interest",
+    "description": "Calculate simple interest and understand basic financial calculations.",
+    "videos": [
+      "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "https://www.youtube.com/embed/VIDEO_ID8_2"
+    ],
+    "notes": [
+      "Simple Interest = (Principal x Rate x Time) / 100",
+      "Amount = Principal + Simple Interest",
+      "Principal = (Simple Interest x 100) / (Rate x Time)",
+      "Rate = (Simple Interest x 100) / (Principal x Time)",
+      "Time = (Simple Interest x 100) / (Principal x Rate)",
+      "When time is in months, divide by 12 to convert to years",
+      "When time is in days, divide by 365 to convert to years"
+    ],
+    "quizPath": "/quiz/simple-interest"
+  },
+  {
+    "id": "probability",
+    "name": "Probability",
+    "description": "Learn probability concepts and solve probability-based problems.",
+    "videos": [
+      "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "https://www.youtube.com/embed/VIDEO_ID9_2"
+    ],
+    "notes": [
+      "Probability = Number of favorable outcomes / Total number of outcomes",
+      "Probability ranges from 0 to 1 (0 = impossible, 1 = certain)",
+      "P(A or B) = P(A) + P(B) - P(A and B)",
+      "P(A and B) = P(A) x P(B) if events are independent",
+      "P(not A) = 1 - P(A)",
+      "For dice problems: Total outcomes = 6^n where n is number of dice",
+      "For coin problems: Total outcomes = 2^n where n is number of coins"
+    ],
+    "quizPath": "/quiz/probability"
+  },
+  {
+    "id": "average",
+    "name": "Average",
+    "description": "Calculate averages, means, and understand central tendency concepts.",
+    "videos": [
+      "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "https://www.youtube.com/embed/VIDEO_ID10_2"
+    ],
+    "notes": [
+      "Average = Sum of all values / Number of values",
+      "Sum of values = Average x Number of values",
+      "If average of n numbers is A, then sum = nA",
+      "If a new number is added: New average = (Old sum + New number) / (n+1)",
+      "If a number is removed: New average = (Old sum - Removed number) / (n-1)",
+      "Weighted average = Σ(Value × Weight) / Σ(Weights)",
+      "For consecutive numbers: Average = (First + Last) / 2"
+    ],
+    "quizPath": "/quiz/average"
+  }
+]
