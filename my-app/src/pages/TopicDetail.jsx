@@ -1,60 +1,83 @@
-import { useParams } from 'react-router-dom';
-
-const topicContent = {
-  percentage: {
-    title: "Percentage",
-    description: "Percentage is a way of expressing a number as a fraction of 100. It's useful in exams, discounts, profit/loss, etc.",
-  },
-  'profit-loss': {
-    title: "Profit & Loss",
-    description: "This topic includes concepts of cost price, selling price, and how to calculate profit/loss percentages.",
-  },
-  'time-work': {
-    title: "Time & Work",
-    description: "Time and work problems involve calculating how much time is needed for a task or how many people are needed.",
-  },
-  'speed-distance': {
-    title: "Speed & Distance",
-    description: "Speed, time, and distance are commonly tested together. Use the formula: Speed = Distance / Time.",
-  },
-  ratio: {
-    title: "Ratio",
-    description: "A ratio compares two quantities and is used in problems involving parts, mixtures, and distribution.",
-  },
-  'number-series': {
-    title: "Number Series",
-    description: "This involves identifying patterns or logic behind sequences of numbers to find the missing term.",
-  },
-  ages: {
-    title: "Ages",
-    description: "Problems on ages use algebraic equations based on age differences and future/past age conditions.",
-  },
-  'simple-interest': {
-    title: "Simple Interest",
-    description: "SI is calculated using the formula: SI = (P × R × T) / 100 where P is principal, R is rate, and T is time.",
-  },
-  probability: {
-    title: "Probability",
-    description: "Probability is the measure of the likelihood of an event. It's between 0 and 1.",
-  },
-  average: {
-    title: "Average",
-    description: "Average = (Sum of items) / (Number of items). Useful for finding typical values in a dataset.",
-  }
-};
+import React, { useEffect, useState } from "react";
+import { useParams, Link } from "react-router-dom";
+import axios from "axios";
 
 function TopicDetail() {
   const { topicId } = useParams();
-  const content = topicContent[topicId];
+  const [topic, setTopic] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  if (!content) {
-    return <h2 style={{ padding: "40px" }}>Topic not found.</h2>;
-  }
+  useEffect(() => {
+    axios.get("/topics.json")
+      .then(res => {
+        const allTopics = res.data;
+        const currentTopic = allTopics.find(t => t.id === topicId);
+        setTopic(currentTopic);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error("Error loading topic:", err);
+        setLoading(false);
+      });
+  }, [topicId]);
+
+  if (loading) return <div className="text-center mt-5">Loading...</div>;
+  if (!topic) return <div className="text-center mt-5">Topic not found</div>;
 
   return (
-    <div style={{ padding: "40px" }}>
-      <h2>{content.title}</h2>
-      <p style={{ fontSize: '18px', lineHeight: '1.6' }}>{content.description}</p>
+    <div className="container py-5">
+      <div className="row">
+        <div className="col-12">
+          <Link to="/topics" className="btn btn-outline-primary mb-4">
+            ← Back to All Topics
+          </Link>
+          
+          <div className="card shadow-sm">
+            <div className="card-body">
+              <h2 className="card-title text-primary mb-4">{topic.name}</h2>
+              <p className="card-text mb-4">{topic.description}</p>
+              
+              <h5 className="text-success mb-3">Videos</h5>
+              <div className="mb-4">
+                {topic.videos && topic.videos.length > 0 ? (
+                  topic.videos.map((url, i) => (
+                    <div key={i} className="mb-3">
+                      <iframe
+                        width="100%"
+                        height="315"
+                        src={url}
+                        title={`${topic.name} Video ${i + 1}`}
+                        frameBorder="0"
+                        allowFullScreen
+                        className="rounded"
+                      />
+                    </div>
+                  ))
+                ) : (
+                  <span className="text-muted">No videos available.</span>
+                )}
+              </div>
+              
+              <h5 className="text-info mb-3">Notes</h5>
+              <ul className="list-group list-group-flush mb-4">
+                {topic.notes && topic.notes.length > 0 ? (
+                  topic.notes.map((note, i) => (
+                    <li key={i} className="list-group-item">{note}</li>
+                  ))
+                ) : (
+                  <li className="list-group-item text-muted">No notes available.</li>
+                )}
+              </ul>
+              
+              <div className="text-center">
+                <a href={topic.quizPath} className="btn btn-primary btn-lg">
+                  Take Practice Test
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

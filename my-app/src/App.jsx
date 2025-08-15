@@ -1,110 +1,204 @@
-import React, { useState, useEffect } from 'react';
-import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import AfterLoginHome from "./pages/AfterLoginHome";
 import Home from './pages/Home';
 import Topic from "./pages/Topic";
 import Quiz from "./pages/Quiz";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
-import { isAuthenticated, getCurrentUser } from './services/auth';
-import { AuthContext } from './contexts/auth.context';
-import Percentage from "./pages/topics/Percentage";
-import ProfitLoss from "./pages/topics/ProfitLoss";
-import TimeWork from "./pages/topics/TimeWork";
-import SpeedDistance from "./pages/topics/SpeedDistance";
-import Ratio from "./pages/topics/Ratio";
-import NumberSeries from "./pages/topics/NumberSeries";
-import Ages from "./pages/topics/Ages";
-import SimpleInterest from "./pages/topics/SimpleInterest";
-import Probability from "./pages/topics/Probability";
-import Average from "./pages/topics/Average";
-function App() {
-  // create a state member for keeping user details
-  const [user, setUser] = useState(null);
+import { AuthProvider, useAuth } from "./context/AuthContext";
 
-  useEffect(() => {
-    // Check if user is authenticated on app load
-    if (isAuthenticated()) {
-      const userData = getCurrentUser();
-      setUser(userData);
-    }
-  }, []);
+
+import TopicsInfo from "./pages/TopicsInfo";
+import TopicDetail from "./pages/TopicDetail";
+import AdminLogin from "./pages/AdminLogin";
+import AdminDashboard from "./pages/AdminDashboard";
+import AdminManageUsers from "./pages/AdminManageUsers";
+import AdminManageTopics from "./pages/AdminManageTopics";
+import AdminFeedback from "./pages/AdminFeedback";
+import StudyModeDashboard from "./pages/StudyModeDashboard";
+import StudyTopicDetail from "./pages/StudyTopicDetail";
+import TrainingModeDashboard from "./pages/TrainingModeDashboard";
+import TrainingTest from "./pages/TrainingTest";
+import ChallengeModeDashboard from "./pages/ChallengeModeDashboard";
+import ChallengeTest from "./pages/ChallengeTest";
+import UserFeedback from "./pages/UserFeedback";
+
+function AppRoutes() {
+  const { currentUser, adminUser, handleLogin, handleLogout, handleAdminLogin, handleAdminLogout, loading } = useAuth();
+
+  const handleRegister = (newUser) => {
+    // This is now handled by the backend, so we don't need to manage local state
+    console.log('User registered:', newUser);
+  };
+
+  if (loading) {
+    return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      Loading...
+    </div>;
+  }
 
   return (
-    <AuthContext.Provider value={{ user, setUser }}>
-      <BrowserRouter>
-        <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-          <Navbar />
-          <div style={{ flex: 1 }}>
-            <Routes>
-              <Route
-                path='/'
-                element={<Login />}
-              />
-              <Route
-                path='register'
-                element={<Register />}
-              />
-              <Route
-                path='home'
-                element={user ? <Home /> : <Navigate to='/' />}
-              />
-              <Route
-                path='topic'
-                element={user ? <Topic /> : <Navigate to='/' />}
-              />
-              <Route
-                path='topic/percentage'
-                element={user ? <Percentage /> : <Navigate to='/' />}
-              />
-              <Route
-                path='topic/profit-loss'
-                element={user ? <ProfitLoss /> : <Navigate to='/' />}
-              />
-              <Route
-                path='topic/time-work'
-                element={user ? <TimeWork /> : <Navigate to='/' />}
-              />
-              <Route
-                path='topic/speed-distance'
-                element={user ? <SpeedDistance /> : <Navigate to='/' />}
-              />
-              <Route
-                path='topic/ratio'
-                element={user ? <Ratio /> : <Navigate to='/' />}
-              />
-              <Route
-                path='topic/number-series'
-                element={user ? <NumberSeries /> : <Navigate to='/' />}
-              />
-              <Route
-                path='topic/ages'
-                element={user ? <Ages /> : <Navigate to='/' />}
-              />
-              <Route
-                path='topic/simple-interest'
-                element={user ? <SimpleInterest /> : <Navigate to='/' />}
-              />
-              <Route
-                path='topic/probability'
-                element={user ? <Probability /> : <Navigate to='/' />}
-              />
-              <Route
-                path='topic/average'
-                element={user ? <Average /> : <Navigate to='/' />}
-              />
-              <Route
-                path='quiz'
-                element={user ? <Quiz /> : <Navigate to='/' />}
-              />
-            </Routes>
-          </div>
-          <Footer />
-        </div>
-      </BrowserRouter>
-    </AuthContext.Provider>
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+      <Navbar />
+      <div style={{ flex: 1 }}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/topic" element={<Topic />} />
+          <Route path="/quiz" element={<Quiz />} />
+          <Route
+            path="/login"
+            element={<Login onLogin={handleLogin} />}
+          />
+          <Route
+            path="/register"
+            element={<Register onRegister={handleRegister} />}
+          />
+          <Route
+            path="/admin-login"
+            element={<AdminLogin onAdminLogin={handleAdminLogin} />}
+          />
+          <Route
+            path="/admin-dashboard"
+            element={
+              adminUser ? (
+                <AdminDashboard admin={adminUser} onLogout={handleAdminLogout} />
+              ) : (
+                <Navigate to="/admin-login" />
+              )
+            }
+          />
+          <Route
+            path="/admin/manage-users"
+            element={
+              adminUser ? (
+                <AdminManageUsers />
+              ) : (
+                <Navigate to="/admin-login" />
+              )
+            }
+          />
+          <Route
+            path="/admin/manage-topics"
+            element={
+              adminUser ? (
+                <AdminManageTopics />
+              ) : (
+                <Navigate to="/admin-login" />
+              )
+            }
+          />
+          <Route
+            path="/admin/feedback"
+            element={
+              adminUser ? (
+                <AdminFeedback />
+              ) : (
+                <Navigate to="/admin-login" />
+              )
+            }
+          />
+          <Route
+            path="/dashboard"
+            element={
+              currentUser ? (
+                <AfterLoginHome user={currentUser} onLogout={handleLogout} />
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
+          />
+          <Route
+            path="/challenge-dashboard"
+            element={
+              currentUser ? (
+                <ChallengeModeDashboard />
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
+          />
+          <Route
+            path="/challenge/:topicId"
+            element={
+              currentUser ? (
+                <ChallengeTest />
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
+          />
+          <Route
+            path="/training-dashboard"
+            element={
+              currentUser ? (
+                <TrainingModeDashboard />
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
+          />
+          <Route
+            path="/training/:topicId"
+            element={
+              currentUser ? (
+                <TrainingTest />
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
+          />
+          <Route
+            path="/study-dashboard"
+            element={
+              currentUser ? (
+                <StudyModeDashboard />
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
+          />
+          <Route
+            path="/study/:topicId"
+            element={
+              currentUser ? (
+                <StudyTopicDetail />
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
+          />
+          <Route
+            path="/feedback"
+            element={
+              currentUser ? (
+                <UserFeedback currentUser={currentUser} />
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
+          />
+          <Route path="/topics" element={<TopicsInfo />} />
+          <Route path="/topic/:topicId" element={<TopicDetail />} />
+          {/* Add other routes here */}
+          <Route path="*" element={<Navigate to={adminUser ? "/admin-dashboard" : currentUser ? "/dashboard" : "/login"} />} />
+        </Routes>
+      </div>
+      <Footer />
+    </div>
   );
 }
 
-export default App
+function App() {
+  return (
+    <AuthProvider>
+      <Router>
+        <AppRoutes />
+      </Router>
+    </AuthProvider>
+  );
+}
+
+export default App;

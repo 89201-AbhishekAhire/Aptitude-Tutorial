@@ -1,17 +1,15 @@
-import { Link, useNavigate } from "react-router-dom";
-import { logout } from "../services/auth";
-import { toast } from "react-toastify";
-import { useAuth } from "../contexts/auth.context";
+import { Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 function Navbar() {
-    const navigate = useNavigate();
-    const { user, setUser } = useAuth();
+    const { currentUser, adminUser, isAuthenticated, handleLogout, handleAdminLogout } = useAuth();
 
-    const handleLogout = () => {
-        logout();
-        setUser(null);
-        toast.success('Logged out successfully!');
-        navigate('/');
+    const handleUserLogout = () => {
+        handleLogout();
+    };
+
+    const handleAdminLogoutClick = () => {
+        handleAdminLogout();
     };
 
     return(
@@ -28,35 +26,62 @@ function Navbar() {
         }}>
 
             <div style={{ display: 'flex', gap: '20px' }}>
-                <Link to="/home" style={{ color: 'white', textDecoration: 'none' }}>Home</Link>
+                <Link to="/" style={{ color: 'white', textDecoration: 'none' }}>Home</Link>
                 <Link to="/topic" style={{ color: 'white', textDecoration: 'none' }}>Topic</Link>
                 <Link to="/quiz" style={{ color: 'white', textDecoration: 'none' }}>Quiz</Link>
             </div>
 
             <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
-                {user ? (
+                {isAuthenticated ? (
                     <>
-                        <span style={{ fontSize: '14px' }}>
-                            Welcome, {user.firstName || 'User'}!
-                        </span>
-                        <button 
-                            onClick={handleLogout}
-                            style={{ 
-                                background: 'none', 
-                                border: '1px solid white', 
-                                color: 'white', 
-                                padding: '5px 15px', 
-                                borderRadius: '4px',
-                                cursor: 'pointer'
-                            }}
-                        >
-                            Logout
-                        </button>
+                        {currentUser && (
+                            <>
+                                <span style={{ color: '#4CAF50', fontWeight: 'bold' }}>
+                                    Welcome, {currentUser.name}!
+                                </span>
+                                <Link to="/dashboard" style={{ color: 'white', textDecoration: 'none' }}>Dashboard</Link>
+                                <button 
+                                    onClick={handleUserLogout}
+                                    style={{ 
+                                        background: 'none', 
+                                        border: '1px solid #ff6b6b', 
+                                        color: '#ff6b6b', 
+                                        padding: '5px 10px', 
+                                        borderRadius: '4px',
+                                        cursor: 'pointer'
+                                    }}
+                                >
+                                    Logout
+                                </button>
+                            </>
+                        )}
+                        {adminUser && (
+                            <>
+                                <span style={{ color: '#ff6b6b', fontWeight: 'bold' }}>
+                                    Admin: {adminUser.name}
+                                </span>
+                                <Link to="/admin-dashboard" style={{ color: 'white', textDecoration: 'none' }}>Admin Dashboard</Link>
+                                <button 
+                                    onClick={handleAdminLogoutClick}
+                                    style={{ 
+                                        background: 'none', 
+                                        border: '1px solid #ff6b6b', 
+                                        color: '#ff6b6b', 
+                                        padding: '5px 10px', 
+                                        borderRadius: '4px',
+                                        cursor: 'pointer'
+                                    }}
+                                >
+                                    Logout
+                                </button>
+                            </>
+                        )}
                     </>
                 ) : (
                     <>
-                        <Link to="/" style={{ color: 'white', textDecoration: 'none' }}>Login</Link>
+                        <Link to="/login" style={{ color: 'white', textDecoration: 'none' }}>Login</Link>
                         <Link to="/register" style={{ color: 'white', textDecoration: 'none' }}>Register</Link>
+                        <Link to="/admin-login" style={{ color: '#ff6b6b', textDecoration: 'none', fontWeight: 'bold' }}>Admin</Link>
                     </>
                 )}
             </div>

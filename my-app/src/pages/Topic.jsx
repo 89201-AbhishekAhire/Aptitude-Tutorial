@@ -1,6 +1,9 @@
 import { Link } from "react-router-dom";
+import { useAuth } from '../context/AuthContext';
 
 function Topic() {
+  const { currentUser, adminUser, isAuthenticated } = useAuth();
+  
   const topics = [
     { id: "percentage", name: "Percentage" },
     { id: "profit-loss", name: "Profit & Loss" },
@@ -17,7 +20,7 @@ function Topic() {
   return (
     <div
       style={{
-        minHeight: "calc(100vh - 120px)", // leaves space for header & footer
+        minHeight: "calc(100vh - 120px)", 
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -25,19 +28,41 @@ function Topic() {
         boxSizing: "border-box",
       }}
     >
-      {/* Heading on top center */}
+     
       <h2
         style={{
           fontSize: "32px",
           color: "#004d40",
-          marginBottom: "40px",
+          marginBottom: "20px",
           textAlign: "center",
         }}
       >
         Select a Topic
       </h2>
 
-      {/* Grid of buttons */}
+      {isAuthenticated && (
+        <div style={{
+          background: currentUser ? '#e8f5e8' : '#ffe8e8',
+          padding: '15px',
+          borderRadius: '8px',
+          marginBottom: '20px',
+          border: `2px solid ${currentUser ? '#4CAF50' : '#ff6b6b'}`,
+          maxWidth: '600px',
+          width: '100%'
+        }}>
+          {currentUser && (
+            <p style={{ margin: 0, color: '#2e7d32', fontWeight: 'bold', textAlign: 'center' }}>
+              📚 {currentUser.name}, choose a topic to study or practice!
+            </p>
+          )}
+          {adminUser && (
+            <p style={{ margin: 0, color: '#d32f2f', fontWeight: 'bold', textAlign: 'center' }}>
+              🔧 Admin {adminUser.name} - Topic Management View
+            </p>
+          )}
+        </div>
+      )}
+      
       <div
         style={{
           display: "grid",

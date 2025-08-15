@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { fetchQuizData } from '../services/Quiz.js';
+import { useAuth } from '../context/AuthContext';
 import './Quiz.css';
+
 const Quiz = () => {
   const [quizData, setQuizData] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -9,6 +11,7 @@ const Quiz = () => {
   const [quizCompleted, setQuizCompleted] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { currentUser, adminUser, isAuthenticated } = useAuth();
 
   useEffect(() => {
     const loadQuiz = async () => {
@@ -51,10 +54,36 @@ const Quiz = () => {
     <div className="quiz-container">
       <h1 className="quiz-title">{quizData.quizTitle}</h1>
       
+      {isAuthenticated && (
+        <div style={{
+          background: currentUser ? '#e8f5e8' : '#ffe8e8',
+          padding: '15px',
+          borderRadius: '8px',
+          marginBottom: '20px',
+          border: `2px solid ${currentUser ? '#4CAF50' : '#ff6b6b'}`
+        }}>
+          {currentUser && (
+            <p style={{ margin: 0, color: '#2e7d32', fontWeight: 'bold' }}>
+              🎯 {currentUser.name}, let's test your aptitude skills!
+            </p>
+          )}
+          {adminUser && (
+            <p style={{ margin: 0, color: '#d32f2f', fontWeight: 'bold' }}>
+              🔧 Admin {adminUser.name} - Quiz Preview Mode
+            </p>
+          )}
+        </div>
+      )}
+      
       {quizCompleted ? (
         <div className="quiz-results">
           <h2>Quiz Completed!</h2>
           <p>Your Score: {score}/{quizData.questions.length}</p>
+          {isAuthenticated && currentUser && (
+            <p style={{ color: '#4CAF50', fontWeight: 'bold' }}>
+              Great job, {currentUser.name}! Keep practicing to improve your skills.
+            </p>
+          )}
         </div>
       ) : (
         <div className="question-container">

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import { TopicService } from "../services/api.js";
 
 function AdminManageTopics() {
   const [topics, setTopics] = useState([]);
@@ -13,51 +13,87 @@ function AdminManageTopics() {
   });
 
   useEffect(() => {
-    axios.get("/topics.json").then(res => setTopics(res.data));
+    const loadTopics = async () => {
+      try {
+        const response = await TopicService.getAllTopics();
+        setTopics(response.data || []);
+      } catch (error) {
+        console.error('Error loading topics:', error);
+        // Fallback to empty array if API fails
+        setTopics([]);
+      }
+    };
+    loadTopics();
   }, []);
 
   // Add Topic
-  const handleAdd = (e) => {
+  const handleAdd = async (e) => {
     e.preventDefault();
-    const newTopic = {
-      ...form,
-      id: form.name.toLowerCase().replace(/\s+/g, '-'),
-      videos: form.videos.filter(v => v.trim() !== ""),
-      notes: form.notes.filter(n => n.trim() !== "")
-    };
-    setTopics([...topics, newTopic]);
-    setForm({ name: "", description: "", videos: [""], notes: [""], quizPath: "" });
+    try {
+      const topicData = {
+        topicName: form.name,
+        topicSlug: form.name.toLowerCase().replace(/\s+/g, '-'),
+        description: form.description,
+        isActive: true
+      };
+      
+      const response = await TopicService.createTopic(topicData);
+      if (response.success) {
+        setTopics([...topics, response.data]);
+        setForm({ name: "", description: "", videos: [""], notes: [""], quizPath: "" });
+      }
+    } catch (error) {
+      console.error('Error creating topic:', error);
+      alert('Failed to create topic. Please try again.');
+    }
   };
 
   // Edit Topic
   const handleEdit = (topic) => {
     setEditingTopic(topic);
     setForm({
-      name: topic.name,
+      name: topic.topicName,
       description: topic.description,
-      videos: topic.videos.length ? topic.videos : [""],
-      notes: topic.notes.length ? topic.notes : [""],
-      quizPath: topic.quizPath
+      videos: topic.videos?.length ? topic.videos : [""],
+      notes: topic.notes?.length ? topic.notes : [""],
+      quizPath: topic.quizPath || ""
     });
   };
 
   // Update Topic
-  const handleUpdate = (e) => {
+  const handleUpdate = async (e) => {
     e.preventDefault();
-    const updatedTopic = {
-      ...editingTopic,
-      ...form,
-      videos: form.videos.filter(v => v.trim() !== ""),
-      notes: form.notes.filter(n => n.trim() !== "")
-    };
-    setTopics(topics.map(t => t.id === editingTopic.id ? updatedTopic : t));
-    setEditingTopic(null);
-    setForm({ name: "", description: "", videos: [""], notes: [""], quizPath: "" });
+    try {
+      const topicData = {
+        topicName: form.name,
+        topicSlug: form.name.toLowerCase().replace(/\s+/g, '-'),
+        description: form.description,
+        isActive: editingTopic.isActive
+      };
+      
+      const response = await TopicService.updateTopic(editingTopic.topicId, topicData);
+      if (response.success) {
+        setTopics(topics.map(t => t.topicId === editingTopic.topicId ? response.data : t));
+        setEditingTopic(null);
+        setForm({ name: "", description: "", videos: [""], notes: [""], quizPath: "" });
+      }
+    } catch (error) {
+      console.error('Error updating topic:', error);
+      alert('Failed to update topic. Please try again.');
+    }
   };
 
   // Delete Topic
-  const handleDelete = (topicId) => {
-    setTopics(topics.filter(t => t.id !== topicId));
+  const handleDelete = async (topicId) => {
+    try {
+      const response = await TopicService.deleteTopic(topicId);
+      if (response.success) {
+        setTopics(topics.filter(t => t.topicId !== topicId));
+      }
+    } catch (error) {
+      console.error('Error deleting topic:', error);
+      alert('Failed to delete topic. Please try again.');
+    }
   };
 
   // Add Video Field
@@ -216,17 +252,17 @@ function AdminManageTopics() {
         </thead>
         <tbody>
           {topics.map(topic => (
-            <tr key={topic.id}>
-              <td>{topic.id}</td>
-              <td>{topic.name}</td>
-              <td>{topic.description.substring(0, 50)}...</td>
-              <td>{topic.videos.length}</td>
-              <td>{topic.notes.length}</td>
+            <tr key={topic.topicId}>
+              <td>{topic.topicId}</td>
+              <td>{topic.topicName}</td>
+              <td>{topic.description?.substring(0, 50) || 'No description'}...</td>
+              <td>{topic.videos?.length || 0}</td>
+              <td>{topic.notes?.length || 0}</td>
               <td>
                 <button className="btn btn-sm btn-warning me-2" onClick={() => handleEdit(topic)}>
                   Edit
                 </button>
-                <button className="btn btn-sm btn-danger" onClick={() => handleDelete(topic.id)}>
+                <button className="btn btn-sm btn-danger" onClick={() => handleDelete(topic.topicId)}>
                   Delete
                 </button>
               </td>
@@ -235,8 +271,8 @@ function AdminManageTopics() {
         </tbody>
       </table>
       
-      <div className="alert alert-info mt-4">
-        <b>Note:</b> These changes are in-memory only. When you connect to your backend, replace the axios calls with your API for full CRUD persistence.
+      <div className="alert alert-success mt-4">
+        <b>✅ Connected to Backend:</b> All topic operations are now connected to your Java Spring Boot backend API.
       </div>
     </div>
   );

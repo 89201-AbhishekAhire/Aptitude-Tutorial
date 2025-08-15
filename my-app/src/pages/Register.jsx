@@ -1,39 +1,61 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { AuthService } from "../services/api.js";
 
-function Register({ users, onRegister }) {
+function Register({ onRegister }) {
   const [form, setForm] = useState({
     name: "",
     email: "",
     password: "",
-    role: "student",
+    role: "STUDENT",
   });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleRegister = (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
-    if (users.find((u) => u.email === form.email)) {
-      setError("Email already exists");
-      setSuccess("");
-      return;
-    }
-    const newUser = {
-      ...form,
-      user_id: users.length + 1,
-      created_at: new Date().toISOString(),
-    };
-    onRegister(newUser);
-    setSuccess("Registration successful! Redirecting to login...");
+    setLoading(true);
     setError("");
-    setTimeout(() => {
-      navigate("/login");
-    }, 1500); // 1.5 seconds delay for user to see the message
+    setSuccess("");
+
+    try {
+      const userData = {
+        name: form.name,
+        email: form.email,
+        password: form.password,
+        role: form.role.toUpperCase()
+      };
+
+      const response = await AuthService.register(userData);
+      
+      if (response.success) {
+        setSuccess("Registration successful! Redirecting to login...");
+        // Call the onRegister callback with the new user data
+        if (onRegister) {
+          onRegister(response.data);
+        }
+        setTimeout(() => {
+          navigate("/login");
+        }, 1500);
+      } else {
+        setError(response.message || "Registration failed");
+      }
+    } catch (err) {
+      console.error('Registration error:', err);
+      if (err.response?.data?.message?.includes('already exists')) {
+        setError("Email already exists");
+      } else {
+        setError("Registration failed. Please try again.");
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -82,12 +104,12 @@ function Register({ users, onRegister }) {
                 value={form.role}
                 onChange={handleChange}
               >
-                <option value="student">Student</option>
-                <option value="admin">Admin</option>
+                <option value="STUDENT">Student</option>
+                <option value="ADMIN">Admin</option>
               </select>
             </div>
-            <button type="submit" className="btn btn-success w-100">
-              Register
+            <button type="submit" className="btn btn-success w-100" disabled={loading}>
+              {loading ? "Registering..." : "Register"}
             </button>
             {error && (
               <div className="alert alert-danger mt-3" role="alert">
@@ -106,4 +128,4 @@ function Register({ users, onRegister }) {
   );
 }
 
-export default Register
+export default Register;
